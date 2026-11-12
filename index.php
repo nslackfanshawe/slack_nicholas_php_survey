@@ -1,6 +1,8 @@
 <?php
+//Includes the file that processes the survey answers.
 require_once 'includes/process.php';
 
+//This function makes sure any submitted text wont be taken as HTML. 
 function escapeHtml($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
@@ -28,6 +30,8 @@ function escapeHtml($value) {
     <div class="col-span-full">
 
         <?php
+        //Checks if the survey has been successfully completed and displays a thank you message
+        //If there are any errors it returns an error. 
         if ($success) {
             echo '<h2>Thank you!</h2>';
             echo '<p>Your survey has been submitted.</p>';
@@ -36,6 +40,7 @@ function escapeHtml($value) {
         ?>
 
         <?php
+        //Checks if there are any errors and displays a message if there are.
         if (!empty($errors)) {
             echo '<div role="alert">';
             echo '<p>Please correct the errors below.</p>';
@@ -60,6 +65,7 @@ function escapeHtml($value) {
                         required
                         value="<?php echo escapeHtml($answers['email']); ?>"
                         <?php
+                        //Returns an error if theres an issue with the email
                         if (isset($errors['email'])) {
                             echo 'aria-invalid="true" aria-describedby="error-email"';
                         }
@@ -67,6 +73,7 @@ function escapeHtml($value) {
                     >
 
                     <?php
+                    //Displays the email validation error
                     if (isset($errors['email'])) {
                         echo '<p class="error" id="error-email">';
                         echo escapeHtml($errors['email']);
@@ -85,6 +92,7 @@ function escapeHtml($value) {
                         required
                         value="<?php echo escapeHtml($answers['phone']); ?>"
                         <?php
+                        //Adds accessibility attributes if theres an issue with the phone number.
                         if (isset($errors['phone'])) {
                             echo 'aria-invalid="true" aria-describedby="error-phone"';
                         }
@@ -92,6 +100,7 @@ function escapeHtml($value) {
                     >
 
                     <?php
+                    //Displays the phone number validation error.
                     if (isset($errors['phone'])) {
                         echo '<p class="error" id="error-phone">';
                         echo escapeHtml($errors['phone']);
@@ -111,6 +120,7 @@ function escapeHtml($value) {
                         required
                         value="<?php echo escapeHtml($answers['date']); ?>"
                         <?php
+                        //Returns an error if theres an issue with the date
                         if (isset($errors['date'])) {
                             echo 'aria-invalid="true" aria-describedby="error-date"';
                         }
@@ -118,6 +128,7 @@ function escapeHtml($value) {
                     >
 
                     <?php
+                    //Displays the date validation error.
                     if (isset($errors['date'])) {
                         echo '<p class="error" id="error-date">';
                         echo escapeHtml($errors['date']);
@@ -131,6 +142,7 @@ function escapeHtml($value) {
                 </section>
 
                 <?php
+                //Array stores the questions for the short answer sections.
                 $textQuestions = [
                     'name' => 'What is your name?',
                     'game' => 'What is your favourite game?',
@@ -140,6 +152,7 @@ function escapeHtml($value) {
                     'franchise' => 'What is your favourite franchise?'
                 ];
 
+                //Goes through each question and creates an input for each. 
                 foreach ($textQuestions as $key => $question) {
                 ?>
 
@@ -157,6 +170,7 @@ function escapeHtml($value) {
                         required
                         value="<?php echo escapeHtml($answers[$key]); ?>"
                         <?php
+                        //Adds accesability attributes if the question has an error. 
                         if (isset($errors[$key])) {
                             echo 'aria-invalid="true"';
                             echo ' aria-describedby="error-' . $key . '"';
@@ -165,6 +179,7 @@ function escapeHtml($value) {
                     >
 
                     <?php
+                    //Displays the validation error for the current question.
                     if (isset($errors[$key])) {
                         echo '<p class="error" id="error-' . $key . '">';
                         echo escapeHtml($errors[$key]);
@@ -183,6 +198,7 @@ function escapeHtml($value) {
                 </section>
 
                 <?php
+                //Array stores the checkbox questions and their answers. 
                 $checkboxQuestions = [
                     'genres' => [
                         'question' => 'What genres do you enjoy?',
@@ -197,13 +213,15 @@ function escapeHtml($value) {
                         'options' => $features
                     ]
                 ];
-
+                
+                //Goes through each checkbox question and creates a fieldset for it.
                 foreach ($checkboxQuestions as $key => $data) {
                 ?>
 
                 <fieldset
                     class="col-span-full"
                     <?php
+                    //Connects the error message to the checkbox question if there is an error.
                     if (isset($errors[$key])) {
                         echo 'aria-describedby="error-' . $key . '"';
                     }
@@ -214,6 +232,7 @@ function escapeHtml($value) {
                     </legend>
 
                     <?php
+                    //Goes through the answers and creates a checkbox for each. 
                     foreach ($data['options'] as $option) {
                     ?>
 
@@ -224,6 +243,7 @@ function escapeHtml($value) {
                                 name="<?php echo $key; ?>[]"
                                 value="<?php echo escapeHtml($option); ?>"
                                 <?php
+                                //Checks if the option was selected, if it was it remains selected. 
                                 if (in_array($option, $answers[$key], true)) {
                                     echo 'checked';
                                 }
@@ -238,6 +258,7 @@ function escapeHtml($value) {
                     ?>
 
                     <?php
+                    //Displays an error if no options were selected. 
                     if (isset($errors[$key])) {
                         echo '<p class="error" id="error-' . $key . '">';
                         echo escapeHtml($errors[$key]);
@@ -255,11 +276,13 @@ function escapeHtml($value) {
                 </section>
 
                 <?php
+                //Stores the questions for the long answers.
                 $longQuestions = [
                     'reason' => 'Why do you enjoy video games?',
                     'memory' => 'What is your favourite gaming memory?'
                 ];
 
+                //Goes through each question and creates a textarea for each.
                 foreach ($longQuestions as $key => $question) {
                 ?>
 
@@ -276,6 +299,7 @@ function escapeHtml($value) {
                         maxlength="1000"
                         required
                         <?php
+                        //Adds accessibility attributes if the question has an error.
                         if (isset($errors[$key])) {
                             echo 'aria-invalid="true"';
                             echo ' aria-describedby="error-' . $key . '"';
@@ -284,6 +308,7 @@ function escapeHtml($value) {
                     ><?php echo escapeHtml($answers[$key]); ?></textarea>
 
                     <?php
+                    //Displays the validation error for the current long answer question.
                     if (isset($errors[$key])) {
                         echo '<p class="error" id="error-' . $key . '">';
                         echo escapeHtml($errors[$key]);
@@ -302,6 +327,7 @@ function escapeHtml($value) {
                 </section>
 
                 <?php
+                //Array stores the radio button questions and their answers.
                 $radioQuestions = [
                     'frequency' => [
                         'question' => 'How often do you play?',
@@ -321,12 +347,14 @@ function escapeHtml($value) {
                     ]
                 ];
 
+                //Goes through each radio button question and creates a fieldset for it.
                 foreach ($radioQuestions as $key => $data) {
                 ?>
 
                 <fieldset
                     class="col-span-full m-col-span-6"
                     <?php
+                    //Connects the error message to the radio button question if there is an error.
                     if (isset($errors[$key])) {
                         echo 'aria-describedby="error-' . $key . '"';
                     }
@@ -337,6 +365,7 @@ function escapeHtml($value) {
                     </legend>
 
                     <?php
+                    //Goes through the answers and creates a radio button for each.
                     foreach ($data['options'] as $option) {
                     ?>
 
@@ -347,6 +376,7 @@ function escapeHtml($value) {
                                 name="<?php echo $key; ?>"
                                 value="<?php echo escapeHtml($option); ?>"
                                 <?php
+                                //Checks if the option was selected, if it was it remains selected.
                                 if ($answers[$key] === $option) {
                                     echo 'checked';
                                 }
@@ -361,6 +391,7 @@ function escapeHtml($value) {
                     ?>
 
                     <?php
+                    //Displays an error if no valid answer was selected.
                     if (isset($errors[$key])) {
                         echo '<p class="error" id="error-' . $key . '">';
                         echo escapeHtml($errors[$key]);
@@ -374,6 +405,7 @@ function escapeHtml($value) {
                 ?>
 
                 <?php
+                //Displays an error if there was a problem processing the survey.
                 if (isset($errors['form'])) {
                     echo '<div class="col-span-full" role="alert">';
                     echo '<p class="error">';
